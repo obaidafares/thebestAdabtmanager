@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدير الديون - Debt Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .debts-list {
+            list-style: none;
+        }
+
+        .debt-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .debt-info {
+            flex: 1;
+        }
+
+        .debt-contact {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .debt-amount {
+            color: #d32f2f;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .welcome-screen h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .welcome-screen p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .welcome-input {
+            max-width: 500px;
+            margin: 0 auto 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .three-column {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .three-column, .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+        }
+
+        .success-message {
+            background: #e0f2e0;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .error-message {
+            background: #ffe0e0;
+            color: #d32f2f;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #d32f2f;
+        }
+
+        .user-info {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .user-phone {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .logout-btn {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #ff5252;
+        }
+
+        .user-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-item:hover {
+            background: #f0f4ff;
+            transform: translateX(-5px);
+        }
+
+        .user-item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-item-phone {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 3px;
+        }
+
+        .debt-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .debt-badge.owed {
+            background: #ffe0e0;
+            color: #d32f2f;
+        }
+
+        .debt-badge.owed-to-me {
+            background: #e0f2e0;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="hidden">
+            <div class="header">
+                <h1>🏦 مدير الديون</h1>
+                <p>Debt Manager</p>
+            </div>
+            <div class="content">
+                <div class="welcome-screen">
+                    <h2>أهلاً وسهلاً</h2>
+                    <p>يرجى إدخال بيانات الدخول الخاصة بك</p>
+                    <div class="welcome-input">
+                        <div class="form-group">
+                            <label>اسمك الكامل</label>
+                            <input type="text" id="userNameInput" placeholder="أدخل اسمك الكامل" />
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف الليبي</label>
+                            <input type="tel" id="userPhoneInput" placeholder="مثال: 218912345678 أو 0912345678" />
+                        </div>
+                        <!-- Password will be injected here by the sync script -->
+                        <div id="welcomePasswordContainer"></div>
+                    </div>
+                    <button class="btn-primary" onclick="startApp()">ابدأ الآن</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App Screen -->
+        <div id="mainScreen" class="hidden">
+            <div class="header">
+                <h1>🏦 مدير الديون</h1>
+                <p>Debt Manager</p>
+            </div>
+            <div class="content">
+                <!-- User Info -->
+                <div class="user-info">
+                    <div class="user-details">
+                        <div class="user-name" id="userDisplay"></div>
+                        <div class="user-phone" id="userPhoneDisplay"></div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+                </div>
+
+                <!-- Messages -->
+                <div id="messageContainer"></div>
+
+                <!-- Three Column Layout -->
+                <div class="three-column">
+                    <!-- Column 1: Add User -->
+                    <div>
+                        <div class="section">
+                            <h2>➕ إضافة مستخدم جديد</h2>
+                            <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">سجّل مستخدماً جديداً في النظام</p>
+
+                            <div class="form-group">
+                                <label>اسم المستخدم</label>
+                                <input type="text" id="newUserNameInput" placeholder="أدخل الاسم" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>رقم الهاتف الليبي</label>
+                                <input type="tel" id="newUserPhoneInput" placeholder="218912345678 أو 0912345678" />
+                            </div>
+
+                            <button class="btn-primary" onclick="addNewUser()">إضافة المستخدم</button>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Add Debt -->
+                    <div>
+                        <div class="section">
+                            <h2>💰 إضافة دين</h2>
+                            <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">أضف دين لمستخدم آخر</p>
+
+                            <div class="form-group">
+                                <label>المديون (من يدين لك)</label>
+                                <select id="debtorSelect">
+                                    <option value="">-- اختر مستخدماً --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>المبلغ (دينار ليبي)</label>
+                                <input type="number" id="amountInput" placeholder="أدخل المبلغ" step="0.01" min="0" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>الوصف (اختياري)</label>
+                                <textarea id="descriptionInput" placeholder="أدخل وصف الدين..."></textarea>
+                            </div>
+
+                            <button class="btn-primary" onclick="addDebt()">إضافة الدين</button>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Users List -->
+                    <div>
+                        <div class="section">
+                            <h2>👥 المستخدمون</h2>
+                            <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">قائمة المستخدمين المسجلين</p>
+                            <ul class="user-list" id="usersList">
+                                <li class="empty-message">لا توجد مستخدمون آخرون</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Debts Section -->
+                <div class="section" style="margin-top: 30px;">
+                    <h2>💳 الديون التي عليّ</h2>
+                    <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">الديون التي أنت مدين بها للآخرين</p>
+                    <ul class="debts-list" id="myDebtsList">
+                        <li class="empty-message">لا توجد ديون عليك حالياً</li>
+                    </ul>
+                </div>
+
+                <!-- Debts to Me Section -->
+                <div class="section" style="margin-top: 30px;">
+                    <h2>📋 الديون التي لي</h2>
+                    <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">الديون التي يدين بها الآخرون لك</p>
+                    <ul class="debts-list" id="debtsToMeList">
+                        <li class="empty-message">لا توجد ديون لك حالياً</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let currentUser = null;
+        let currentUserPhone = null;
+        let users = [];
+        let debts = [];
+
+        // Initialize app
+        function init() {
+            loadData();
+            if (currentUser) {
+                showMainScreen();
+            } else {
+                showWelcomeScreen();
+            }
+        }
+
+        // Show welcome screen
+        function showWelcomeScreen() {
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+            document.getElementById('mainScreen').classList.add('hidden');
+        }
+
+        // Show main screen
+        function showMainScreen() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('mainScreen').classList.remove('hidden');
+            document.getElementById('userDisplay').textContent = `مرحباً، ${currentUser}`;
+            document.getElementById('userPhoneDisplay').textContent = `الهاتف: ${currentUserPhone}`;
+            updateUsersList();
+            updateDebtorSelect();
+            updateMyDebtsList();
+            updateDebtsToMeList();
+        }
+
+        // Start app
+        function startApp() {
+            const userName = document.getElementById('userNameInput').value.trim();
+            const userPhone = document.getElementById('userPhoneInput').value.trim();
+
+            if (!userName || !userPhone) {
+                showMessage('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+
+            if (!validateLibyanPhone(userPhone)) {
+                showMessage('رقم الهاتف غير صحيح. يرجى إدخال رقم هاتف ليبي صحيح', 'error');
+                return;
+            }
+
+            const formattedPhone = formatPhone(userPhone);
+
+            // Check if user already exists
+            if (users.some(u => u.phone === formattedPhone)) {
+                showMessage('هذا الرقم مسجل بالفعل', 'error');
+                return;
+            }
+
+            currentUser = userName;
+            currentUserPhone = formattedPhone;
+
+            // Add user to list
+            users.push({
+                id: Date.now(),
+                name: userName,
+                phone: formattedPhone,
+                registeredAt: new Date().toLocaleString('ar-LY')
+            });
+
+            saveData();
+
+            document.getElementById('userNameInput').value = '';
+            document.getElementById('userPhoneInput').value = '';
+
+            showMainScreen();
+        }
+
+        // Add new user
+        function addNewUser() {
+            const userName = document.getElementById('newUserNameInput').value.trim();
+            const userPhone = document.getElementById('newUserPhoneInput').value.trim();
+
+            if (!userName || !userPhone) {
+                showMessage('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+
+            if (!validateLibyanPhone(userPhone)) {
+                showMessage('رقم الهاتف غير صحيح. يرجى إدخال رقم هاتف ليبي صحيح', 'error');
+                return;
+            }
+
+            const formattedPhone = formatPhone(userPhone);
+
+            // Check if user already exists
+            if (users.some(u => u.phone === formattedPhone)) {
+                showMessage('هذا الرقم مسجل بالفعل', 'error');
+                return;
+            }
+
+            // Add user to list
+            users.push({
+                id: Date.now(),
+                name: userName,
+                phone: formattedPhone,
+                registeredAt: new Date().toLocaleString('ar-LY')
+            });
+
+            saveData();
+
+            document.getElementById('newUserNameInput').value = '';
+            document.getElementById('newUserPhoneInput').value = '';
+
+            showMessage('تم إضافة المستخدم بنجاح', 'success');
+            updateUsersList();
+            updateDebtorSelect();
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                currentUser = null;
+                currentUserPhone = null;
+                saveData();
+                document.getElementById('userNameInput').value = '';
+                document.getElementById('userPhoneInput').value = '';
+                showWelcomeScreen();
+            }
+        }
+
+        // Validate Libyan phone number
+        function validateLibyanPhone(phone) {
+            phone = phone.replace(/\s/g, '');
+            const patterns = [
+                /^218(9[1-9])\d{7}$/,
+                /^0(9[1-9])\d{7}$/
+            ];
+            return patterns.some(pattern => pattern.test(phone));
+        }
+
+        // Format phone number
+        function formatPhone(phone) {
+            phone = phone.replace(/\s/g, '');
+            if (phone.startsWith('0')) {
+                return '218' + phone.substring(1);
+            }
+            return phone;
+        }
+
+        // Add debt
+        function addDebt() {
+            const debtorId = document.getElementById('debtorSelect').value;
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            const description = document.getElementById('descriptionInput').value.trim();
+
+            if (!debtorId || !amount || amount <= 0) {
+                showMessage('يرجى ملء جميع الحقول بشكل صحيح', 'error');
+                return;
+            }
+
+            const debtor = users.find(u => u.id === parseInt(debtorId));
+            if (!debtor) {
+                showMessage('المستخدم غير موجود', 'error');
+                return;
+            }
+
+            const currentUserId = users.find(u => u.phone === currentUserPhone).id;
+            if (debtor.id === currentUserId) {
+                showMessage('لا يمكنك إضافة دين لنفسك', 'error');
+                return;
+            }
+
+            const debt = {
+                id: Date.now(),
+                creditorId: currentUserId,
+                creditorName: currentUser,
+                creditorPhone: currentUserPhone,
+                debtorId: debtor.id,
+                debtorName: debtor.name,
+                debtorPhone: debtor.phone,
+                amount: amount,
+                description: description,
+                createdAt: new Date().toLocaleString('ar-LY')
+            };
+
+            debts.push(debt);
+            saveData();
+
+            document.getElementById('debtorSelect').value = '';
+            document.getElementById('amountInput').value = '';
+            document.getElementById('descriptionInput').value = '';
+
+            showMessage('تم إضافة الدين بنجاح', 'success');
+            updateMyDebtsList();
+            updateDebtsToMeList();
+        }
+
+        // Delete debt
+        function deleteDebt(id) {
+            if (confirm('هل تريد حذف هذا الدين؟')) {
+                debts = debts.filter(d => d.id !== id);
+                saveData();
+                updateMyDebtsList();
+                updateDebtsToMeList();
+                showMessage('تم حذف الدين بنجاح', 'success');
+            }
+        }
+
+        // Update users list
+        function updateUsersList() {
+            const list = document.getElementById('usersList');
+            const otherUsers = users.filter(u => u.phone !== currentUserPhone);
+
+            if (otherUsers.length === 0) {
+                list.innerHTML = '<li class="empty-message">لا توجد مستخدمون آخرون</li>';
+                return;
+            }
+
+            list.innerHTML = otherUsers.map(user => `
+                <li class="user-item">
+                    <div class="user-item-name">${user.name}</div>
+                    <div class="user-item-phone">${user.phone}</div>
+                </li>
+            `).join('');
+        }
+
+        // Update debtor select
+        function updateDebtorSelect() {
+            const select = document.getElementById('debtorSelect');
+            select.innerHTML = '<option value="">-- اختر مستخدماً --</option>';
+            const otherUsers = users.filter(u => u.phone !== currentUserPhone);
+            otherUsers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${user.name} (${user.phone})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Update my debts list
+        function updateMyDebtsList() {
+            const list = document.getElementById('myDebtsList');
+            const currentUserId = users.find(u => u.phone === currentUserPhone)?.id;
+            const myDebts = debts.filter(d => d.debtorId === currentUserId);
+
+            if (myDebts.length === 0) {
+                list.innerHTML = '<li class="empty-message">لا توجد ديون عليك حالياً</li>';
+                return;
+            }
+
+            list.innerHTML = myDebts.map(debt => `
+                <li class="debt-item">
+                    <div class="debt-info">
+                        <div class="debt-contact">💳 ${debt.creditorName}</div>
+                        <div class="debt-amount">${debt.amount.toFixed(2)} دينار ليبي</div>
+                        <span class="debt-badge owed">أنت مدين</span>
+                        ${debt.description ? `<div style="color: #999; margin-top: 8px; font-size: 0.9em;">📝 ${debt.description}</div>` : ''}
+                        <div style="color: #999; margin-top: 8px; font-size: 0.85em;">📅 ${debt.createdAt}</div>
+                    </div>
+                    <!-- حذف غير مسموح للمديون -->
+                </li>
+            `).join('');
+        }
+
+        // Update debts to me list
+        function updateDebtsToMeList() {
+            const list = document.getElementById('debtsToMeList');
+            const currentUserId = users.find(u => u.phone === currentUserPhone)?.id;
+            const debtsToMe = debts.filter(d => d.creditorId === currentUserId);
+
+            if (debtsToMe.length === 0) {
+                list.innerHTML = '<li class="empty-message">لا توجد ديون لك حالياً</li>';
+                return;
+            }
+
+            list.innerHTML = debtsToMe.map(debt => `
+                <li class="debt-item">
+                    <div class="debt-info">
+                        <div class="debt-contact">👤 ${debt.debtorName}</div>
+                        <div class="debt-amount">${debt.amount.toFixed(2)} دينار ليبي</div>
+                        <span class="debt-badge owed-to-me">هو مدين</span>
+                        ${debt.description ? `<div style="color: #999; margin-top: 8px; font-size: 0.9em;">📝 ${debt.description}</div>` : ''}
+                        <div style="color: #999; margin-top: 8px; font-size: 0.85em;">📅 ${debt.createdAt}</div>
+                    </div>
+                    <!-- حذف غير مسموح للمديون -->
+                </li>
+            `).join('');
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `${type}-message`;
+            messageDiv.textContent = message;
+            container.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('debtManagerData', JSON.stringify({
+                currentUser,
+                currentUserPhone,
+                users,
+                debts
+            }));
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            const data = localStorage.getItem('debtManagerData');
+            if (data) {
+                const parsed = JSON.parse(data);
+                currentUser = parsed.currentUser;
+                currentUserPhone = parsed.currentUserPhone;
+                users = parsed.users || [];
+                debts = parsed.debts || [];
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', init);
+    </script>
+
+    <!-- SYNC & ENHANCEMENTS SCRIPT (ADDITIONS WITHOUT REMOVING ORIGINAL CODE) -->
+    <script type="module">
+  // Firebase (النسخة الصحيحة لمشروعك)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue, remove, get, child } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+  // إعدادات Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAL2VnWugFyPsGw6AVVq7foy7ek99umVfU",
+    authDomain: "debt-manager-sync.firebaseapp.com",
+    databaseURL: "https://debt-manager-sync-default-rtdb.firebaseio.com",
+    projectId: "debt-manager-sync",
+    storageBucket: "debt-manager-sync.firebasestorage.app",
+    messagingSenderId: "502398909462",
+    appId: "1:502398909462:web:0a2ba1340f045e95524937",
+    measurementId: "G-BQBWYSWE8W"
+  };
+
+  // تشغيل Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+
+    // --- Helper: inject password input into welcome screen (no change to original HTML file) ---
+    (function injectPasswordInput() {
+        const container = document.getElementById('welcomePasswordContainer');
+        if (!container) return;
+        container.innerHTML = `
+            <div class="form-group">
+                <label>كلمة المرور (باسوورد)</label>
+                <input type="password" id="userPasswordInput" placeholder="أدخل كلمة المرور" />
+                <small style="color:#666">إنشاء حساب جديد: أدخل كلمة مرور سيتم حفظها للسماح بتسجيل الدخول لاحقاً</small>
+            </div>
+        `;
+    })();
+
+    // --- Cloud sync functions ---
+    function syncUserToCloud(user) {
+        if (!user || !user.phone) return;
+        set(ref(db, 'users/' + user.phone), user).catch(err => console.error('syncUserToCloud error', err));
+    }
+
+    function removeUserFromCloud(phone) {
+        if (!phone) return;
+        remove(ref(db, 'users/' + phone)).catch(err => console.error('removeUserFromCloud error', err));
+    }
+
+    function syncDebtToCloud(debt) {
+        if (!debt || !debt.id) return;
+        set(ref(db, 'debts/' + debt.id), debt).catch(err => console.error('syncDebtToCloud error', err));
+    }
+
+    function removeDebtFromCloud(id) {
+        if (!id) return;
+        remove(ref(db, 'debts/' + id)).catch(err => console.error('removeDebtFromCloud error', err));
+    }
+
+    // Load data from cloud and merge with local
+    function loadFromCloudAndMerge() {
+        // users
+        onValue(ref(db, 'users'), snapshot => {
+            const cloudUsers = snapshot.exists() ? snapshot.val() : null;
+            if (cloudUsers) {
+                // convert to array, but ensure uniqueness by phone
+                const cloudArr = Object.values(cloudUsers);
+                const merged = {};
+                // add local users first
+                users.forEach(u => merged[u.phone] = u);
+                cloudArr.forEach(u => merged[u.phone] = Object.assign({}, merged[u.phone] || {}, u));
+                users = Object.values(merged);
+                saveDataLocalOnly(); // save locally after merge
+                // update UI if on main screen
+                if (currentUser) updateUsersList();
+                updateDebtorSelect();
+            }
+        });
+
+        // debts
+        onValue(ref(db, 'debts'), snapshot => {
+            const cloudDebts = snapshot.exists() ? snapshot.val() : null;
+            if (cloudDebts) {
+                const cloudArr = Object.values(cloudDebts);
+                // merge debts based on id (numbers)
+                const mergedDebts = {};
+                debts.forEach(d => mergedDebts[d.id] = d);
+                cloudArr.forEach(d => mergedDebts[d.id] = Object.assign({}, mergedDebts[d.id] || {}, d));
+                debts = Object.values(mergedDebts);
+                saveDataLocalOnly();
+                if (currentUser) {
+                    updateMyDebtsList();
+                    updateDebtsToMeList();
+                }
+            }
+        });
+    }
+
+    // Save only locally (used by sync merge to avoid writing back immediately)
+    function saveDataLocalOnly() {
+        localStorage.setItem('debtManagerData', JSON.stringify({
+            currentUser,
+            currentUserPhone,
+            users,
+            debts
+        }));
+    }
+
+    // Override original saveData to also sync to cloud
+    window.saveData = function() {
+        // Save locally first
+        localStorage.setItem('debtManagerData', JSON.stringify({
+            currentUser,
+            currentUserPhone,
+            users,
+            debts
+        }));
+
+        // Sync users
+        users.forEach(u => {
+            // ensure phone exists and is key
+            if (u.phone) syncUserToCloud(u);
+        });
+
+        // Sync debts
+        debts.forEach(d => {
+            if (d.id) syncDebtToCloud(d);
+        });
+    };
+
+    // Override original loadData to load local then start cloud sync
+    window.loadData = function() {
+        const data = localStorage.getItem('debtManagerData');
+        if (data) {
+            try {
+                const parsed = JSON.parse(data);
+                currentUser = parsed.currentUser;
+                currentUserPhone = parsed.currentUserPhone;
+                users = parsed.users || [];
+                debts = parsed.debts || [];
+            } catch (e) {
+                console.error('loadData parse error', e);
+            }
+        }
+        // Start cloud syncing (will merge cloud data into local)
+        loadFromCloudAndMerge();
+    };
+
+    // --- Override UI update functions to add delete-user buttons and phone-based uniqueness ---
+
+    window.updateUsersList = function() {
+        const list = document.getElementById('usersList');
+        const otherUsers = users.filter(u => u.phone !== currentUserPhone);
+
+        if (otherUsers.length === 0) {
+            list.innerHTML = '<li class="empty-message">لا توجد مستخدمون آخرون</li>';
+            return;
+        }
+
+        list.innerHTML = otherUsers.map(user => `
+            <li class="user-item" data-phone="${user.phone}">
+                <div class="user-item-name">${user.name}</div>
+                <div class="user-item-phone">${user.phone}</div>
+                <div style="margin-top:8px; display:flex; gap:8px; justify-content:flex-end;">
+                    <button class="btn-secondary" onclick="startChatPlaceholder('${user.phone}')">عرض</button>
+                    <button class="btn-danger" onclick="deleteUser('${user.phone}')">حذف مستخدم</button>
+                </div>
+            </li>
+        `).join('');
+    };
+
+    // simple placeholder for possible future features
+    window.startChatPlaceholder = function(phone) {
+        const u = users.find(x => x.phone === phone);
+        if (!u) { showMessage('المستخدم غير موجود', 'error'); return; }
+        showMessage(`عرض بيانات ${u.name}`, 'success');
+    };
+
+    // Update debtor select to use phone as unique identifier but keep original option.values as user.id to avoid breaking addDebt
+    window.updateDebtorSelect = function() {
+        const select = document.getElementById('debtorSelect');
+        select.innerHTML = '<option value="">-- اختر مستخدماً --</option>';
+        const otherUsers = users.filter(u => u.phone !== currentUserPhone);
+        otherUsers.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id; // keep original structure to avoid changing addDebt logic
+            option.textContent = `${user.name} (${user.phone})`;
+            select.appendChild(option);
+        });
+    };
+
+    // ensure updateMyDebtsList and updateDebtsToMeList use phone-based currentUserPhone to find current user id
+    window.updateMyDebtsList = function() {
+        const list = document.getElementById('myDebtsList');
+        const currentUserObj = users.find(u => u.phone === currentUserPhone);
+        const currentUserId = currentUserObj ? currentUserObj.id : null;
+        const myDebts = debts.filter(d => d.debtorPhone === currentUserPhone || d.debtorId === currentUserId);
+
+        if (myDebts.length === 0) {
+            list.innerHTML = '<li class="empty-message">لا توجد ديون عليك حالياً</li>';
+            return;
+        }
+
+        list.innerHTML = myDebts.map(debt => `
+            <li class="debt-item">
+                <div class="debt-info">
+                    <div class="debt-contact">💳 ${debt.creditorName}</div>
+                    <div class="debt-amount">${Number(debt.amount).toFixed(2)} دينار ليبي</div>
+                    <span class="debt-badge owed">أنت مدين</span>
+                    ${debt.description ? `<div style="color: #999; margin-top: 8px; font-size: 0.9em;">📝 ${debt.description}</div>` : ''}
+                    <div style="color: #999; margin-top: 8px; font-size: 0.85em;">📅 ${debt.createdAt}</div>
+                </div>
+                <!-- حذف غير مسموح للمديون -->
+            </li>
+        `).join('');
+    };
+
+    window.updateDebtsToMeList = function() {
+        const list = document.getElementById('debtsToMeList');
+        const currentUserObj = users.find(u => u.phone === currentUserPhone);
+        const currentUserId = currentUserObj ? currentUserObj.id : null;
+        const debtsToMe = debts.filter(d => d.creditorPhone === currentUserPhone || d.creditorId === currentUserId);
+
+        if (debtsToMe.length === 0) {
+            list.innerHTML = '<li class="empty-message">لا توجد ديون لك حالياً</li>';
+            return;
+        }
+
+        list.innerHTML = debtsToMe.map(debt => `
+            <li class="debt-item">
+                <div class="debt-info">
+                    <div class="debt-contact">👤 ${debt.debtorName}</div>
+                    <div class="debt-amount">${Number(debt.amount).toFixed(2)} دينار ليبي</div>
+                    <span class="debt-badge owed-to-me">هو مدين</span>
+                    ${debt.description ? `<div style="color: #999; margin-top: 8px; font-size: 0.9em;">📝 ${debt.description}</div>` : ''}
+                    <div style="color: #999; margin-top: 8px; font-size: 0.85em;">📅 ${debt.createdAt}</div>
+                </div>
+                <!-- حذف غير مسموح للمديون -->
+            </li>
+        `).join('');
+    };
+
+    // Override startApp to include password behavior and phone-based uniqueness
+    window.startApp = function() {
+        const userName = document.getElementById('userNameInput').value.trim();
+        const userPhone = document.getElementById('userPhoneInput').value.trim();
+        const userPassword = (document.getElementById('userPasswordInput') ? document.getElementById('userPasswordInput').value.trim() : '');
+
+        if (!userName || !userPhone || !userPassword) {
+            showMessage('يرجى ملء جميع الحقول بما فيها كلمة المرور', 'error');
+            return;
+        }
+
+        if (!validateLibyanPhone(userPhone)) {
+            showMessage('رقم الهاتف غير صحيح. يرجى إدخال رقم هاتف ليبي صحيح', 'error');
+            return;
+        }
+
+        const formattedPhone = formatPhone(userPhone);
+
+        // Check if user already exists locally or in cloud
+        const existingLocal = users.find(u => u.phone === formattedPhone);
+        if (existingLocal) {
+            // if exists locally, require password match (if password stored)
+            if (existingLocal.password && existingLocal.password !== userPassword) {
+                showMessage('كلمة المرور غير صحيحة', 'error');
+                return;
+            }
+            // log in
+            currentUser = existingLocal.name;
+            currentUserPhone = existingLocal.phone;
+            saveData(); // will sync
+            document.getElementById('userNameInput').value = '';
+            document.getElementById('userPhoneInput').value = '';
+            if (document.getElementById('userPasswordInput')) document.getElementById('userPasswordInput').value = '';
+            showMainScreen();
+            return;
+        }
+
+        // If not local, check cloud for existing user with phone
+        get(child(ref(db), `users/${formattedPhone}`)).then(snapshot => {
+            if (snapshot.exists()) {
+                const cloudUser = snapshot.val();
+                if (cloudUser.password && cloudUser.password !== userPassword) {
+                    showMessage('كلمة المرور غير صحيحة', 'error');
+                    return;
+                }
+                // Accept cloud user
+                users.push(cloudUser);
+                currentUser = cloudUser.name;
+                currentUserPhone = cloudUser.phone;
+                saveData();
+                document.getElementById('userNameInput').value = '';
+                document.getElementById('userPhoneInput').value = '';
+                if (document.getElementById('userPasswordInput')) document.getElementById('userPasswordInput').value = '';
+                showMainScreen();
+            } else {
+                // create new user with password
+                const newUser = {
+                    id: Date.now(),
+                    name: userName,
+                    phone: formattedPhone,
+                    password: userPassword,
+                    registeredAt: new Date().toLocaleString('ar-LY')
+                };
+                users.push(newUser);
+                syncUserToCloud(newUser);
+                currentUser = newUser.name;
+                currentUserPhone = newUser.phone;
+                saveData();
+                document.getElementById('userNameInput').value = '';
+                document.getElementById('userPhoneInput').value = '';
+                if (document.getElementById('userPasswordInput')) document.getElementById('userPasswordInput').value = '';
+                showMainScreen();
+            }
+        }).catch(err => {
+            console.error('startApp get user error', err);
+            showMessage('حدث خطأ أثناء الاتصال بالسحابة. سيتم المتابعة محلياً', 'error');
+            // fallback: create local user
+            const newUser = {
+                id: Date.now(),
+                name: userName,
+                phone: formattedPhone,
+                password: userPassword,
+                registeredAt: new Date().toLocaleString('ar-LY')
+            };
+            users.push(newUser);
+            currentUser = newUser.name;
+            currentUserPhone = newUser.phone;
+            saveData();
+            document.getElementById('userNameInput').value = '';
+            document.getElementById('userPhoneInput').value = '';
+            if (document.getElementById('userPasswordInput')) document.getElementById('userPasswordInput').value = '';
+            showMainScreen();
+        });
+    };
+
+    // Override addNewUser to store password optional (prompt)
+    window.addNewUser = function() {
+    const userPhone = document.getElementById('newUserPhoneInput').value.trim();
+
+    if (!userPhone) {
+        showMessage('يرجى إدخال رقم الهاتف', 'error');
+        return;
+    }
+
+    if (!validateLibyanPhone(userPhone)) {
+        showMessage('رقم الهاتف غير صحيح. يرجى إدخال رقم هاتف ليبي صحيح', 'error');
+        return;
+    }
+
+    const formattedPhone = formatPhone(userPhone);
+
+    // إذا كان المستخدم موجودًا في القائمة المحلية، لا نكرره
+    if (users.some(u => u.phone === formattedPhone)) {
+        showMessage('هذا الرقم موجود بالفعل في قائمتك', 'error');
+        return;
+    }
+
+    // نبحث عنه في قاعدة البيانات السحابية فقط
+    get(child(ref(db), `users/${formattedPhone}`)).then(snapshot => {
+        if (!snapshot.exists()) {
+            showMessage('هذا الرقم غير مسجل من قبل', 'error');
+            return;
+        }
+
+        const cloudUser = snapshot.val();
+
+        // نضيفه إلى قائمتك المحلية فقط
+        users.push(cloudUser);
+        saveData();
+
+        document.getElementById('newUserPhoneInput').value = '';
+        document.getElementById('newUserNameInput').value = '';
+
+        showMessage('تمت إضافة المستخدم المسجل إلى قائمتك بنجاح', 'success');
+        updateUsersList();
+        updateDebtorSelect();
+    }).catch(err => {
+        console.error(err);
+        showMessage('هذا الرقم غير مسجل من قبل', 'error');
+    });
+};
+    // Override addDebt to sync to cloud as well
+    window.addDebt = function() {
+        const debtorId = document.getElementById('debtorSelect').value;
+        const amount = parseFloat(document.getElementById('amountInput').value);
+        const description = document.getElementById('descriptionInput').value.trim();
+
+        if (!debtorId || !amount || amount <= 0) {
+            showMessage('يرجى ملء جميع الحقول بشكل صحيح', 'error');
+            return;
+        }
+
+        const debtor = users.find(u => u.id === parseInt(debtorId));
+        if (!debtor) {
+            showMessage('المستخدم غير موجود', 'error');
+            return;
+        }
+
+        const currentUserObj = users.find(u => u.phone === currentUserPhone);
+        if (!currentUserObj) {
+            showMessage('حدث خطأ: المستخدم الحالي غير معروف', 'error');
+            return;
+        }
+        const currentUserId = currentUserObj.id;
+
+        if (debtor.id === currentUserId) {
+            showMessage('لا يمكنك إضافة دين لنفسك', 'error');
+            return;
+        }
+
+        const debt = {
+            id: Date.now(),
+            creditorId: currentUserId,
+            creditorName: currentUser,
+            creditorPhone: currentUserPhone,
+            debtorId: debtor.id,
+            debtorName: debtor.name,
+            debtorPhone: debtor.phone,
+            amount: amount,
+            description: description,
+            createdAt: new Date().toLocaleString('ar-LY')
+        };
+
+        debts.push(debt);
+        syncDebtToCloud(debt);
+        saveData();
+
+        document.getElementById('debtorSelect').value = '';
+        document.getElementById('amountInput').value = '';
+        document.getElementById('descriptionInput').value = '';
+
+        showMessage('تم إضافة الدين بنجاح', 'success');
+        updateMyDebtsList();
+        updateDebtsToMeList();
+    };
+
+    // Delete user and related debts
+    window.deleteUser = function(phone) {
+        if (!confirm('هل تريد حذف هذا المستخدم وكل الديون المتعلقة به؟')) return;
+        // remove locally
+        users = users.filter(u => u.phone !== phone);
+        // remove debts where creditorPhone or debtorPhone equals phone
+        const debtsToRemove = debts.filter(d => d.creditorPhone === phone || d.debtorPhone === phone).map(d => d.id);
+        debts = debts.filter(d => d.creditorPhone !== phone && d.debtorPhone !== phone);
+
+        // sync removals
+        removeUserFromCloud(phone);
+        debtsToRemove.forEach(id => removeDebtFromCloud(id));
+
+        saveData();
+        updateUsersList();
+        updateDebtorSelect();
+        updateMyDebtsList();
+        updateDebtsToMeList();
+        showMessage('تم حذف المستخدم وجميع ديونه', 'success');
+    };
+
+    // Override deleteDebt to also remove from cloud
+    window.deleteDebt = function(id) {
+        const debtObj = debts.find(d => d.id === id);
+        if (debtObj && debtObj.creditorPhone !== currentUserPhone) {
+            showMessage('فقط الدائن يمكنه حذف الدين', 'error');
+            return;
+        }
+        if (confirm('هل تريد حذف هذا الدين؟')) {
+            debts = debts.filter(d => d.id !== id);
+            removeDebtFromCloud(id);
+            saveData();
+            updateMyDebtsList();
+            updateDebtsToMeList();
+            showMessage('تم حذف الدين بنجاح', 'success');
+        }
+    };
+
+    // When the page loads, start cloud listeners (already called in loadData override), but ensure we call it immediately in case loadData already ran
+    // Note: loadData override calls loadFromCloudAndMerge; calling here is safe (it sets up onValue listeners again but it's idempotent)
+    // ensure UI updates periodically
+    setTimeout(() => {
+        if (!users) users = [];
+        if (!debts) debts = [];
+        updateUsersList();
+        updateDebtorSelect();
+        updateMyDebtsList();
+        updateDebtsToMeList();
+    }, 800);
+
+    </script>
+</body>
+</html>
